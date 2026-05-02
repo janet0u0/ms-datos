@@ -6,11 +6,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * PATRÓN REPOSITORY
- * =================
+ * PATRÓN REPOSITORY - MS-Datos
+ * =============================
  * Abstrae el acceso a la base de datos.
- * La lógica de negocio no necesita conocer
- * los detalles de cómo se guardan los datos.
+ * La lógica de negocio (VentaService) no necesita conocer
+ * los detalles de cómo se almacenan las ventas.
+ *
+ * Si se cambia MySQL por otro motor de BD,
+ * solo se modifica esta capa sin afectar el Service.
  */
 @Repository
 public interface VentaRepository extends JpaRepository<Venta, Long> {
@@ -21,6 +24,6 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     // Buscar ventas por origen (POS o ECOMMERCE)
     List<Venta> findByOrigen(String origen);
 
-    // Buscar ventas por estado
+    // Buscar ventas por estado (PROCESADO | PENDIENTE)
     List<Venta> findByEstado(String estado);
 }

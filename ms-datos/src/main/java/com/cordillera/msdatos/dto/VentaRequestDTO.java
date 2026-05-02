@@ -1,22 +1,21 @@
 package com.cordillera.msdatos.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * DTO de Venta
- * Solo expone los campos necesarios al cliente.
- * El cliente NO necesita enviar id, fechaVenta ni estado,
- * esos los asigna el sistema automáticamente.
+ * DTO de entrada para registro de Venta.
+ * Solo expone los campos que el cliente puede enviar.
+ * El ID, fechaVenta y estado los asigna el sistema automáticamente.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VentaDTO {
+public class VentaRequestDTO {
 
     @NotBlank(message = "La sucursal es obligatoria")
     private String sucursal;
