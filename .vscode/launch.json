@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-MsDatosApplication<ms-datos>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.cordillera.msdatos.MsDatosApplication",
+            "projectName": "ms-datos",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
