@@ -12,11 +12,7 @@ import java.util.List;
 
 /**
  * Servicio de Gestión de Ventas - MS-Datos
- * Contiene la lógica de negocio del microservicio.
- *
- * Patrón aplicado: Repository Pattern
- * Accede a datos exclusivamente a través de VentaRepository,
- * sin conocer los detalles de la base de datos.
+ * Grupo Cordillera
  */
 @Slf4j
 @Service
@@ -26,8 +22,7 @@ public class VentaService {
     private final VentaRepository ventaRepository;
 
     /**
-     * Convierte entidad Venta a VentaResponseDTO.
-     * Separa la capa de persistencia de la presentación.
+     * Mapea la entidad Venta al DTO de respuesta.
      */
     private VentaResponseDTO mapToDTO(Venta venta) {
         return new VentaResponseDTO(
@@ -42,10 +37,10 @@ public class VentaService {
     }
 
     /**
-     * Lista todas las ventas del sistema.
+     * Obtiene todas las ventas registradas.
      */
     public List<VentaResponseDTO> obtenerTodas() {
-        log.info("Obteniendo todas las ventas");
+        log.info("Obteniendo todas las ventas desde la base de datos");
         return ventaRepository.findAll()
                 .stream()
                 .map(this::mapToDTO)
@@ -53,10 +48,10 @@ public class VentaService {
     }
 
     /**
-     * Lista ventas por sucursal.
+     * Obtiene ventas filtradas por sucursal.
      */
     public List<VentaResponseDTO> obtenerPorSucursal(String sucursal) {
-        log.info("Obteniendo ventas de sucursal: {}", sucursal);
+        log.info("Consultando ventas para la sucursal: {}", sucursal);
         return ventaRepository.findBySucursal(sucursal)
                 .stream()
                 .map(this::mapToDTO)
@@ -64,11 +59,10 @@ public class VentaService {
     }
 
     /**
-     * Registra una nueva venta desde el DTO.
-     * Asigna automáticamente fechaVenta y estado.
+     * Registra una nueva venta.
      */
     public VentaResponseDTO registrarVenta(VentaRequestDTO dto) {
-        log.info("Registrando nueva venta de sucursal: {}", dto.getSucursal());
+        log.info("Iniciando registro de venta para sucursal: {}", dto.getSucursal());
 
         Venta venta = new Venta();
         venta.setSucursal(dto.getSucursal());
@@ -82,13 +76,28 @@ public class VentaService {
     }
 
     /**
-     * Calcula el total acumulado de todas las ventas.
+     * Suma el monto de todas las ventas para el KPI total.
      */
     public Double obtenerTotalVentas() {
-        log.info("Calculando total de ventas");
+        log.info("Calculando sumatoria total de ventas");
         return ventaRepository.findAll()
                 .stream()
                 .mapToDouble(Venta::getMonto)
                 .sum();
+    }
+
+    /**
+     * Elimina una venta por su ID.
+     * Se incluye validación de nulidad para evitar warnings de seguridad de tipos.
+     */
+    public void eliminarVenta(Long id) {
+        log.info("Intentando eliminar venta con ID: {}", id);
+        
+        if (id != null && ventaRepository.existsById(id)) {
+            ventaRepository.deleteById(id);
+            log.info("Venta con ID {} eliminada correctamente", id);
+        } else {
+            log.warn("No se pudo eliminar: el ID {} no existe o es nulo", id);
+        }
     }
 }
