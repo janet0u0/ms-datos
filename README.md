@@ -1,4 +1,4 @@
-markdown# MS-Datos - Grupo Cordillera
+MS-Datos - Grupo Cordillera
 
 Microservicio de gestión de ventas del Grupo Cordillera. 
 Centraliza y procesa las transacciones de ventas de todas las sucursales.
