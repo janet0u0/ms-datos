@@ -13,34 +13,46 @@ import java.util.List;
 /**
  * Controller REST del MS-Datos - Grupo Cordillera
  * Expone los endpoints de gestión de ventas.
+ * CORS configurado en CorsConfig.java
  */
 @RestController
 @RequestMapping("/api/datos")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class VentaController {
 
     private final VentaService ventaService;
 
-    /**
-     * GET /api/datos/ventas
-     */
     @GetMapping("/ventas")
     public ResponseEntity<List<VentaResponseDTO>> obtenerVentas() {
         return ResponseEntity.ok(ventaService.obtenerTodas());
     }
 
-    /**
-     * GET /api/datos/ventas/total
-     */
     @GetMapping("/ventas/total")
     public ResponseEntity<Double> obtenerTotal() {
         return ResponseEntity.ok(ventaService.obtenerTotalVentas());
     }
 
-    /**
-     * POST /api/datos/ventas
-     */
+    // ✅ AGREGADO: endpoint para filtrar por sucursal
+    @GetMapping("/ventas/sucursal/{sucursal}")
+    public ResponseEntity<List<VentaResponseDTO>> obtenerPorSucursal(
+            @PathVariable String sucursal) {
+        return ResponseEntity.ok(ventaService.obtenerPorSucursal(sucursal));
+    }
+
+    // ✅ AGREGADO: endpoint para filtrar por origen (POS o ECOMMERCE)
+    @GetMapping("/ventas/origen/{origen}")
+    public ResponseEntity<List<VentaResponseDTO>> obtenerPorOrigen(
+            @PathVariable String origen) {
+        return ResponseEntity.ok(ventaService.obtenerPorOrigen(origen));
+    }
+
+    // ✅ AGREGADO: endpoint para filtrar por estado (PROCESADO | PENDIENTE)
+    @GetMapping("/ventas/estado/{estado}")
+    public ResponseEntity<List<VentaResponseDTO>> obtenerPorEstado(
+            @PathVariable String estado) {
+        return ResponseEntity.ok(ventaService.obtenerPorEstado(estado));
+    }
+
     @PostMapping("/ventas")
     public ResponseEntity<VentaResponseDTO> registrarVenta(
             @Valid @RequestBody VentaRequestDTO dto) {
@@ -48,11 +60,6 @@ public class VentaController {
                 .body(ventaService.registrarVenta(dto));
     }
 
-    /**
-     * DELETE /api/datos/ventas/{id}
-     * Elimina una venta específica por su ID.
-     * Si el ID existe, retorna 204 (No Content).
-     */
     @DeleteMapping("/ventas/{id}")
     public ResponseEntity<Void> eliminarVenta(@PathVariable Long id) {
         ventaService.eliminarVenta(id);
