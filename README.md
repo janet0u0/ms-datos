@@ -90,29 +90,34 @@ POST /api/datos/ventas
 | PROCESADO | Venta procesada correctamente |
 | PENDIENTE | Venta pendiente de procesar |
 
-## Estructura del proyecto
+## 📂 Estructura del Proyecto MS-DATOS
+
+```text
 ms-datos/
 ├── src/
 │   ├── main/
-│   │   ├── java/com/cordillera/msdatos/
-│   │   │   ├── controller/
-│   │   │   │   └── VentaController.java
-│   │   │   ├── dto/
-│   │   │   │   ├── VentaRequestDTO.java
-│   │   │   │   └── VentaResponseDTO.java
-│   │   │   ├── model/
-│   │   │   │   └── Venta.java
-│   │   │   ├── repository/
-│   │   │   │   └── VentaRepository.java
-│   │   │   └── service/
-│   │   │       └── VentaService.java
+│   │   ├── controller/
+│   │   ├── dto/
+│   │   ├── model/
+│   │   ├── repository/
+│   │   ├── service/
 │   │   └── resources/
-│   │       └── application.properties
 │   └── test/
 ├── docker-compose.yml
 ├── pom.xml
 └── README.md
+```
 
+## 📌 Componentes principales
+
+```text
+controller/   → Gestión de endpoints REST
+dto/          → Transferencia de datos
+model/        → Entidades del sistema
+repository/   → Acceso a base de datos con JPA
+service/      → Lógica de negocio
+resources/    → Configuración de Spring Boot
+```
 ## Monitoreo
 El microservicio incluye Spring Actuator para monitoreo:
 ```
