@@ -1,9 +1,8 @@
-MS-Datos - Grupo Cordillera
+# 📊 MS-Datos - Grupo Cordillera
 
-Microservicio de gestión de ventas del Grupo Cordillera. 
-Centraliza y procesa las transacciones de ventas de todas las sucursales.
+Microservicio de gestión de ventas del Grupo Cordillera. Centraliza y procesa las transacciones de ventas de todas las sucursales.
 
-## Tecnologías
+## 🛠️ Tecnologías
 - Java 17
 - Spring Boot 3.3.5
 - Spring Data JPA
@@ -13,37 +12,43 @@ Centraliza y procesa las transacciones de ventas de todas las sucursales.
 - Lombok
 - Maven
 
-## Patrones Aplicados
+## 🎯 Patrones Aplicados
 - **Repository Pattern**: Abstrae el acceso a la base de datos
 - **DTO Pattern**: Separa el modelo interno de la API
 - **Builder Pattern**: Construcción de entidades con Lombok @Builder
 
-## Requisitos
+## ✅ Requisitos
 - Java 17
 - Docker Desktop
 - Maven
 
-## Instalación y Ejecución
+## 🚀 Instalación y Ejecución
 
-### 1. Clonar el repositorio
+### Opción 1: Docker (recomendado)
 ```bash
-git clone 
+docker compose up --build
+```
+
+### Opción 2: Local
+
+**1. Clonar el repositorio**
+```bash
+git clone https://github.com/janet0u0/ms-datos
 cd ms-datos
 ```
 
-### 2. Levantar MySQL con Docker
+**2. Levantar MySQL con Docker**
 ```bash
 docker-compose up -d
 ```
 
-### 3. Ejecutar el microservicio
+**3. Ejecutar el microservicio**
 ```bash
 .\mvnw spring-boot:run
 ```
+Disponible en `http://localhost:8083`
 
-El servicio quedará disponible en `http://localhost:8083`
-
-## Endpoints
+## 🔗 Endpoints
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -52,9 +57,9 @@ El servicio quedará disponible en `http://localhost:8083`
 | GET | /api/datos/ventas/total | Total acumulado de ventas |
 | POST | /api/datos/ventas | Registrar nueva venta |
 
-## Ejemplo de uso
+## 📝 Ejemplo de uso
 
-### Registrar venta
+**Registrar venta**
 ```json
 POST /api/datos/ventas
 {
@@ -65,7 +70,7 @@ POST /api/datos/ventas
 }
 ```
 
-### Respuesta
+**Respuesta**
 ```json
 {
     "id": 1,
@@ -78,19 +83,19 @@ POST /api/datos/ventas
 }
 ```
 
-### Orígenes disponibles
+## 📋 Referencias
+
 | Origen | Descripción |
 |--------|-------------|
 | POS | Venta en tienda física |
 | ECOMMERCE | Venta en línea |
 
-### Estados disponibles
 | Estado | Descripción |
 |--------|-------------|
 | PROCESADO | Venta procesada correctamente |
 | PENDIENTE | Venta pendiente de procesar |
 
-## 📂 Estructura del Proyecto MS-DATOS
+## 📂 Estructura del Proyecto
 
 ```text
 ms-datos/
@@ -104,6 +109,7 @@ ms-datos/
 │   │   └── resources/
 │   └── test/
 ├── docker-compose.yml
+├── Dockerfile
 ├── pom.xml
 └── README.md
 ```
@@ -111,15 +117,16 @@ ms-datos/
 ## 📌 Componentes principales
 
 ```text
-controller/   → Gestión de endpoints REST
+controller/   → Endpoints REST
 dto/          → Transferencia de datos
-model/        → Entidades del sistema
-repository/   → Acceso a base de datos con JPA
+model/        → Entidades JPA
+repository/   → Acceso a base de datos
 service/      → Lógica de negocio
-resources/    → Configuración de Spring Boot
+resources/    → Configuración
 ```
-## Monitoreo
-El microservicio incluye Spring Actuator para monitoreo:
+
+## 📡 Monitoreo
+
 ```
 GET http://localhost:8083/actuator/health
 GET http://localhost:8083/actuator/info
