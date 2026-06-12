@@ -17,6 +17,7 @@ class GlobalExceptionHandlerTest {
 
     private GlobalExceptionHandler handler;
 
+
     @BeforeEach
     void setUp() {
         handler = new GlobalExceptionHandler();
