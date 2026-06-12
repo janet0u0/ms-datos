@@ -1,153 +1,175 @@
-👤 MS-Usuarios - Grupo Cordillera
+# 📊 MS-Datos - Grupo Cordillera
 
-Microservicio de gestión de usuarios con autenticación y control de acceso basado en roles (RBAC).
+Microservicio encargado de centralizar, almacenar y consultar las ventas generadas por las distintas sucursales del Grupo Cordillera.
+
+---
 
 ## 🛠️ Tecnologías
-- Java 17
-- Spring Boot 3.3.5
-- Spring Security
-- Spring Data JPA
-- MySQL 8.0
-- JUnit 5
-- Mockito
-- JaCoCo
-- Docker
-- Lombok
-- Maven
+
+* Java 17
+* Spring Boot 3.3.5
+* Spring Data JPA
+* Spring Boot Actuator
+* MySQL 8.0
+* Docker
+* Lombok
+* Maven
+* JUnit 5
+* Mockito
+* JaCoCo
+
+---
 
 ## 🎯 Patrones Aplicados
-- **Repository Pattern**: Abstrae el acceso a la base de datos
-- **DTO Pattern**: Separa el modelo interno de la API
-- **RBAC**: Control de acceso basado en roles
+
+* **Repository Pattern**: abstrae el acceso a la base de datos.
+* **DTO Pattern**: separa el modelo interno de la API.
+* **Builder Pattern**: facilita la construcción de entidades mediante Lombok.
+
+---
 
 ## ✅ Requisitos
-- Java 17
-- Docker Desktop
-- Maven
+
+* Java 17
+* Maven
+* Docker Desktop
+
+---
 
 ## 🚀 Instalación y Ejecución
 
-### Opción 1: Docker (recomendado)
+### Opción 1: Docker (Recomendado)
+
 ```bash
 docker compose up --build
 ```
 
-### Opción 2: Local
+### Opción 2: Ejecución Local
 
-**1. Clonar el repositorio**
+#### 1. Clonar repositorio
+
 ```bash
-git clone https://github.com/janet0u0/ms-usuarios
-cd ms-usuarios
+git clone https://github.com/janet0u0/ms-datos
+cd ms-datos
 ```
 
-**2. Levantar MySQL con Docker**
+#### 2. Levantar MySQL
+
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-**3. Ejecutar el microservicio**
+#### 3. Ejecutar aplicación
+
 ```bash
 .\mvnw spring-boot:run
 ```
-Disponible en `http://localhost:8081`
+
+Disponible en:
+
+```text
+http://localhost:8083
+```
+
+---
 
 ## 🔗 Endpoints
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | /api/usuarios/login | Autenticar usuario |
-| POST | /api/usuarios/registrar | Registrar nuevo usuario |
-| GET | /api/usuarios | Listar todos los usuarios |
-| GET | /api/usuarios/{id} | Buscar usuario por ID |
-| PUT | /api/usuarios/{id} | Actualizar usuario |
-| DELETE | /api/usuarios/{id} | Eliminar usuario |
+| Método | Endpoint                              | Descripción                    |
+| ------ | ------------------------------------- | ------------------------------ |
+| GET    | /api/datos/ventas                     | Obtiene todas las ventas       |
+| GET    | /api/datos/ventas/sucursal/{sucursal} | Obtiene ventas por sucursal    |
+| GET    | /api/datos/ventas/total               | Obtiene el monto total vendido |
+| POST   | /api/datos/ventas                     | Registra una nueva venta       |
 
-## 📝 Ejemplo de uso
+---
 
-**Registrar usuario**
+## 📝 Ejemplo de Uso
+
+### Registrar Venta
+
 ```json
-POST /api/usuarios/registrar
+POST /api/datos/ventas
+
 {
-    "nombre": "Juan Pérez",
-    "email": "juan@cordillera.cl",
-    "password": "123456",
-    "rol": "EJECUTIVO"
+  "sucursal": "Santiago Centro",
+  "monto": 150000,
+  "cantidad": 3,
+  "origen": "POS"
 }
 ```
 
-**Login**
+### Respuesta
+
 ```json
-POST /api/usuarios/login
 {
-    "email": "juan@cordillera.cl",
-    "password": "123456"
+  "id": 1,
+  "sucursal": "Santiago Centro",
+  "monto": 150000,
+  "cantidad": 3,
+  "origen": "POS",
+  "fechaVenta": "2026-05-07T00:00:00",
+  "estado": "PROCESADO"
 }
 ```
 
-## 👥 Roles disponibles
+---
 
-| Rol | Descripción |
-|-----|-------------|
-| EJECUTIVO | Alta Gerencia |
-| ANALISTA | Analista de Negocio |
-| SUPERVISOR | Supervisor de Operaciones |
-| ADMIN_SISTEMA | Administrador del Sistema |
+## 📋 Catálogo de Valores
 
-## 🔒 Seguridad
-- Passwords encriptados con BCrypt
-- CORS configurado para localhost:3000
+### Origen de Venta
+
+| Código    | Descripción                       |
+| --------- | --------------------------------- |
+| POS       | Venta en tienda física            |
+| ECOMMERCE | Venta realizada por canal digital |
+
+### Estado de Venta
+
+| Estado    | Descripción                      |
+| --------- | -------------------------------- |
+| PROCESADO | Venta registrada correctamente   |
+| PENDIENTE | Venta pendiente de procesamiento |
+
+---
 
 ## 📂 Estructura del Proyecto
 
 ```text
-ms-usuarios/
+ms-datos/
 ├── src/
 │   ├── main/
 │   │   ├── java/
-│   │   │   └── com/cordillera/msusuarios/
-│   │   │       ├── config/
-│   │   │       │   ├── CorsConfig.java
-│   │   │       │   └── SecurityConfig.java
+│   │   │   └── com/cordillera/msdatos/
 │   │   │       ├── controller/
-│   │   │       │   └── UsuarioController.java
+│   │   │       │   └── VentaController.java
 │   │   │       ├── dto/
-│   │   │       │   ├── LoginRequestDTO.java
-│   │   │       │   ├── UsuarioRequestDTO.java
-│   │   │       │   └── UsuarioResponseDTO.java
-│   │   │       ├── exception/
-│   │   │       │   ├── GlobalExceptionHandler.java
-│   │   │       │   └── ResourceNotFoundException.java
+│   │   │       │   ├── VentaRequestDTO.java
+│   │   │       │   └── VentaResponseDTO.java
 │   │   │       ├── model/
-│   │   │       │   ├── Rol.java
-│   │   │       │   └── Usuario.java
+│   │   │       │   └── Venta.java
 │   │   │       ├── repository/
-│   │   │       │   └── UsuarioRepository.java
+│   │   │       │   └── VentaRepository.java
 │   │   │       ├── service/
-│   │   │       │   └── UsuarioService.java
-│   │   │       └── MsUsuariosApplication.java
-│   │   │
+│   │   │       │   └── VentaService.java
+│   │   │       └── MsDatosApplication.java
+│   │
 │   │   └── resources/
 │   │       └── application.properties
 │   │
 │   └── test/
 │       ├── java/
-│       │   └── com/cordillera/msusuarios/
-│       │       ├── config/
-│       │       │   └── SecurityConfigTest.java
+│       │   └── com/cordillera/msdatos/
 │       │       ├── controller/
-│       │       │   └── UsuarioControllerTest.java
+│       │       │   └── VentaControllerTest.java
 │       │       ├── dto/
-│       │       │   ├── LoginRequestDTOTest.java
-│       │       │   ├── UsuarioRequestDTOTest.java
-│       │       │   └── UsuarioResponseDTOTest.java
-│       │       ├── exception/
-│       │       │   ├── GlobalExceptionHandlerTest.java
-│       │       │   └── ResourceNotFoundExceptionTest.java
+│       │       │   ├── VentaRequestDTOTest.java
+│       │       │   └── VentaResponseDTOTest.java
 │       │       ├── repository/
-│       │       │   └── UsuarioRepositoryTest.java
+│       │       │   └── VentaRepositoryTest.java
 │       │       ├── service/
-│       │       │   └── UsuarioServiceTest.java
-│       │       └── MsUsuariosApplicationTests.java
+│       │       │   └── VentaServiceTest.java
+│       │       └── MsDatosApplicationTests.java
 │       │
 │       └── resources/
 │           └── application-test.properties
@@ -160,79 +182,64 @@ ms-usuarios/
 └── README.md
 ```
 
-## 📌 Componentes principales
+---
+
+## 📌 Componentes Principales
 
 ```text
-config/       → Seguridad y CORS
-controller/   → Endpoints REST
-dto/          → Transferencia de datos
-exception/    → Manejo de errores
+controller/   → Exposición de endpoints REST
+dto/          → Objetos de transferencia de datos
 model/        → Entidades JPA
-repository/   → Acceso a base de datos
+repository/   → Acceso a datos
 service/      → Lógica de negocio
-resources/    → Configuración
+resources/    → Configuración de la aplicación
 ```
-## 🧪 Pruebas Unitarias y Cobertura
 
-El microservicio cuenta con pruebas unitarias y de integración para validar la lógica de negocio, repositorios, controladores, configuración y manejo de excepciones.
+---
 
-### Herramientas utilizadas
+## 🏗️ Flujo de Arquitectura
+
+```text
+Cliente
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Repository
+   ↓
+MySQL
+```
+
+---
+
+## 🧪 Pruebas Unitarias
+
+El proyecto incorpora pruebas unitarias para:
+
+* Controller
+* Service
+* Repository
+* DTO
+
+Herramientas utilizadas:
 
 * JUnit 5
 * Mockito
-* Spring Boot Test
 * JaCoCo
 
-### Cobertura de Código
-
-| Paquete     | Cobertura |
-| ----------- | --------- |
-| service     | 100%      |
-| controller  | 100%      |
-| repository  | 100%      |
-| config      | 100%      |
-| exception   | 100%      |
-| model       | 100%      |
-| application | 100%      |
-
-**Cobertura Total del Proyecto:** 100%
-
-### Ejecutar pruebas
-
-```bash
-.\mvnw test
-```
-
-### Generar reporte JaCoCo
-
-```bash
-.\mvnw clean test jacoco:report
-```
-
-Reporte generado en:
-
-```text
-target/site/jacoco/index.html
-```
-
-### Resultados
-
-* Instrucciones cubiertas: 100%
-* Métodos cubiertos: 100%
-* Clases cubiertas: 100%
-* Ramas cubiertas: 100%
-* Tests exitosos: 37/37
-
-
-## 🏗️ Flujo del Microservicio
-
-```text
-Cliente → Controller → Service → Repository → MySQL
-```
+---
 
 ## 📡 Monitoreo
 
+### Estado de Salud
+
+```http
+GET http://localhost:8083/actuator/health
 ```
-GET http://localhost:8081/actuator/health
-GET http://localhost:8081/actuator/info
+
+### Información de la Aplicación
+
+```http
+GET http://localhost:8083/actuator/info
 ```
