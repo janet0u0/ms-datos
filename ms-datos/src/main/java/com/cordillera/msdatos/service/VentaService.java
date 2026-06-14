@@ -65,19 +65,45 @@ public class VentaService {
                 .map(this::mapToDTO)
                 .toList();
     }
+public VentaResponseDTO registrarVenta(VentaRequestDTO dto) {
 
-    public VentaResponseDTO registrarVenta(VentaRequestDTO dto) {
-        log.info("Iniciando registro de venta para sucursal: {}", dto.getSucursal());
-        Venta venta = Venta.builder()
-                .sucursal(dto.getSucursal())
-                .monto(dto.getMonto())
-                .cantidad(dto.getCantidad())
-                .origen(dto.getOrigen())
-                .fechaVenta(LocalDateTime.now())
-                .estado("PROCESADO")
-                .build();
-        return mapToDTO(ventaRepository.save(venta));
+    log.info("Iniciando registro de venta para sucursal: {}", dto.getSucursal());
+
+    // Regla 1: sucursal obligatoria
+    if (dto.getSucursal() == null || dto.getSucursal().isBlank()) {
+        throw new IllegalArgumentException(
+                "La sucursal es obligatoria");
     }
+
+    // Regla 2: monto mayor a cero
+    if (dto.getMonto() == null || dto.getMonto() <= 0) {
+        throw new IllegalArgumentException(
+                "El monto debe ser mayor a cero");
+    }
+
+    // Regla 3: cantidad mayor a cero
+    if (dto.getCantidad() == null || dto.getCantidad() <= 0) {
+        throw new IllegalArgumentException(
+                "La cantidad debe ser mayor a cero");
+    }
+
+    // Regla 4: origen obligatorio
+    if (dto.getOrigen() == null || dto.getOrigen().isBlank()) {
+        throw new IllegalArgumentException(
+                "El origen es obligatorio");
+    }
+
+    Venta venta = Venta.builder()
+            .sucursal(dto.getSucursal())
+            .monto(dto.getMonto())
+            .cantidad(dto.getCantidad())
+            .origen(dto.getOrigen())
+            .fechaVenta(LocalDateTime.now()) // fecha automática
+            .estado("PROCESADO")             // estado automático
+            .build();
+
+    return mapToDTO(ventaRepository.save(venta));
+}
 
     public Double obtenerTotalVentas() {
         log.info("Calculando sumatoria total de ventas");

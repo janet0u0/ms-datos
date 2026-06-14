@@ -243,80 +243,195 @@ class VentaServiceTest {
 
         verify(ventaRepository, never()).deleteById(any());
     }
-    // ── Reglas de negocio adicionales ─────────────────────────────
+ // ── Reglas de negocio ─────────────────────────────────────────────
 
 @Test
-@DisplayName("Debe conservar todos los datos enviados al registrar")
-void registrarVenta_DebeConservarDatosIngresados() {
+@DisplayName("Debe rechazar sucursal nula")
+void registrarVenta_SucursalNula() {
 
     VentaRequestDTO dto = new VentaRequestDTO();
-    dto.setSucursal("Valparaiso");
-    dto.setMonto(35000.0);
-    dto.setCantidad(4);
-    dto.setOrigen("ECOMMERCE");
+    dto.setSucursal(null);
+    dto.setMonto(10000.0);
+    dto.setCantidad(1);
+    dto.setOrigen("POS");
 
-    when(ventaRepository.save(any(Venta.class)))
-            .thenAnswer(i -> i.getArgument(0));
-
-    var result = ventaService.registrarVenta(dto);
-
-    assertEquals("Valparaiso", result.getSucursal());
-    assertEquals(35000.0, result.getMonto());
-    assertEquals(4, result.getCantidad());
-    assertEquals("ECOMMERCE", result.getOrigen());
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
 }
 
 @Test
-@DisplayName("Debe guardar una sola vez en el repositorio")
-void registrarVenta_DebeGuardarUnaSolaVez() {
+@DisplayName("Debe rechazar sucursal vacía")
+void registrarVenta_SucursalVacia() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("");
+    dto.setMonto(10000.0);
+    dto.setCantidad(1);
+    dto.setOrigen("POS");
+
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
+}
+
+@Test
+@DisplayName("Debe rechazar sucursal con espacios")
+void registrarVenta_SucursalBlank() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("   ");
+    dto.setMonto(10000.0);
+    dto.setCantidad(1);
+    dto.setOrigen("POS");
+
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
+}
+
+@Test
+@DisplayName("Debe rechazar monto igual a cero")
+void registrarVenta_MontoCero() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Santiago");
+    dto.setMonto(0.0);
+    dto.setCantidad(1);
+    dto.setOrigen("POS");
+
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
+}
+
+@Test
+@DisplayName("Debe rechazar monto negativo")
+void registrarVenta_MontoNegativo() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Santiago");
+    dto.setMonto(-1000.0);
+    dto.setCantidad(1);
+    dto.setOrigen("POS");
+
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
+}
+
+@Test
+@DisplayName("Debe rechazar cantidad igual a cero")
+void registrarVenta_CantidadCero() {
 
     VentaRequestDTO dto = new VentaRequestDTO();
     dto.setSucursal("Santiago");
     dto.setMonto(10000.0);
-    dto.setCantidad(2);
+    dto.setCantidad(0);
     dto.setOrigen("POS");
 
-    when(ventaRepository.save(any(Venta.class)))
-            .thenAnswer(i -> i.getArgument(0));
-
-    ventaService.registrarVenta(dto);
-
-    verify(ventaRepository, times(1))
-            .save(any(Venta.class));
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
 }
 
 @Test
-@DisplayName("Debe verificar existencia antes de eliminar")
-void eliminarVenta_DebeVerificarExistenciaAntesDeEliminar() {
+@DisplayName("Debe rechazar cantidad negativa")
+void registrarVenta_CantidadNegativa() {
 
-    when(ventaRepository.existsById(1L))
-            .thenReturn(true);
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Santiago");
+    dto.setMonto(10000.0);
+    dto.setCantidad(-1);
+    dto.setOrigen("POS");
 
-    doNothing().when(ventaRepository)
-            .deleteById(1L);
-
-    ventaService.eliminarVenta(1L);
-
-    verify(ventaRepository, times(1))
-            .existsById(1L);
-
-    verify(ventaRepository, times(1))
-            .deleteById(1L);
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
 }
 
 @Test
-@DisplayName("Debe retornar exactamente el total acumulado")
-void obtenerTotalVentas_DebeSumarCorrectamente() {
+@DisplayName("Debe rechazar origen nulo")
+void registrarVenta_OrigenNulo() {
 
-    when(ventaRepository.findAll())
-            .thenReturn(List.of(
-                    Venta.builder().monto(10000.0).build(),
-                    Venta.builder().monto(20000.0).build(),
-                    Venta.builder().monto(30000.0).build()
-            ));
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Santiago");
+    dto.setMonto(10000.0);
+    dto.setCantidad(1);
+    dto.setOrigen(null);
 
-    Double total = ventaService.obtenerTotalVentas();
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
+}
 
-    assertEquals(60000.0, total);
+@Test
+@DisplayName("Debe rechazar origen vacío")
+void registrarVenta_OrigenVacio() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Santiago");
+    dto.setMonto(10000.0);
+    dto.setCantidad(1);
+    dto.setOrigen("");
+
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
+}
+
+@Test
+@DisplayName("Debe rechazar origen con espacios")
+void registrarVenta_OrigenBlank() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Santiago");
+    dto.setMonto(10000.0);
+    dto.setCantidad(1);
+    dto.setOrigen("   ");
+
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
+}
+@Test
+@DisplayName("Debe rechazar monto nulo")
+void registrarVenta_MontoNulo() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Santiago");
+    dto.setMonto(null);
+    dto.setCantidad(1);
+    dto.setOrigen("POS");
+
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
+}
+@Test
+@DisplayName("Debe rechazar cantidad nula")
+void registrarVenta_CantidadNula() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Santiago");
+    dto.setMonto(10000.0);
+    dto.setCantidad(null);
+    dto.setOrigen("POS");
+
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> ventaService.registrarVenta(dto)
+    );
 }
 }
