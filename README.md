@@ -1,296 +1,344 @@
-# 📈 MS-KPI - Grupo Cordillera
+# 📊 MS-Datos - Grupo Cordillera
 
-Microservicio encargado de la gestión y monitoreo de los **Indicadores Clave de Desempeño (KPIs)** del Grupo Cordillera.
+Microservicio encargado de la gestión, almacenamiento y consulta de las ventas registradas por las sucursales del Grupo Cordillera.
 
-Permite registrar, consultar, actualizar y eliminar KPIs asociados a distintas áreas de negocio, facilitando la toma de decisiones mediante indicadores de ventas, rentabilidad, logística e inventario.
-
----
-
-## 🛠️ Tecnologías
-
-- Java 17
-- Spring Boot 3.3.5
-- Spring Data JPA
-- Spring Boot Actuator
-- MySQL 8.0
-- Docker
-- Lombok
-- Maven
-- JUnit 5
-- Mockito
-- JaCoCo
+Forma parte de una arquitectura basada en microservicios desarrollada con Spring Boot, Docker y MySQL, permitiendo centralizar la información de ventas para su posterior análisis mediante KPIs y paneles de visualización.
 
 ---
 
-## 🎯 Patrones Aplicados
+# 🛠️ Tecnologías Utilizadas
 
-### Repository Pattern
-Abstrae el acceso a la base de datos mediante Spring Data JPA.
-
-### DTO Pattern
-Separa el modelo interno de la API para mayor seguridad y desacoplamiento.
-
-### Builder Pattern
-Facilita la creación de objetos utilizando Lombok `@Builder`.
-
----
-
-## ✅ Requisitos
-
-- Java 17
-- Maven
-- Docker Desktop
+* Java 17
+* Spring Boot 3.3.5
+* Spring Data JPA
+* Spring Boot Actuator
+* MySQL 8.0
+* Docker
+* Maven
+* Lombok
+* JUnit 5
+* Mockito
+* MockMvc
+* JaCoCo
 
 ---
 
-## 🚀 Instalación y Ejecución
+# 🎯 Patrones de Diseño Aplicados
 
-### Opción 1: Docker (Recomendado)
+## Repository Pattern
+
+Permite abstraer el acceso a los datos mediante Spring Data JPA.
+
+## DTO Pattern
+
+Separa la representación interna de las entidades de los datos expuestos por la API.
+
+## Builder Pattern
+
+Implementado mediante Lombok para facilitar la construcción de objetos.
+
+---
+
+# 📋 Requisitos
+
+* Java 17
+* Maven 3.9+
+* Docker Desktop
+
+---
+
+# 🚀 Ejecución del Sistema
+
+## Arquitectura Integrada
+
+MS-Datos forma parte del ecosistema de microservicios:
+
+* BFF-Cordillera
+* MS-Usuarios
+* MS-Datos
+* MS-KPI
+* Frontend React
+* Bases de datos MySQL independientes
+
+## Levantamiento Recomendado
+
+El sistema completo debe iniciarse desde el proyecto:
+
+```bash
+bff-cordillera
+```
+
+Ejecutar:
 
 ```bash
 docker compose up --build
 ```
 
-### Opción 2: Ejecución Local
+Este comando levanta automáticamente:
 
-#### 1. Clonar repositorio
+* mysql-ms-datos
+* mysql-ms-usuarios
+* mysql-ms-kpi
+* ms-datos
+* ms-usuarios
+* ms-kpi
+* bff-cordillera
 
-```bash
-git clone https://github.com/janet0u0/ms-kpi
-cd ms-kpi
-```
+No es necesario ejecutar individualmente los docker-compose de cada microservicio.
 
-#### 2. Levantar Base de Datos
+---
 
-```bash
-docker compose up -d
-```
-
-#### 3. Ejecutar Aplicación
-
-```bash
-.\mvnw spring-boot:run
-```
-
-Disponible en:
+# 🌐 URL Base
 
 ```text
-http://localhost:8082
+http://localhost:8083
 ```
 
 ---
 
-## 🔗 Endpoints
+# 🔗 Endpoints Disponibles
 
-| Método | Endpoint | Descripción |
-|----------|----------|----------|
-| GET | /api/kpis | Obtiene todos los KPIs |
-| GET | /api/kpis/{id} | Obtiene un KPI por ID |
-| GET | /api/kpis/tipo/{tipo} | Obtiene KPIs por tipo |
-| GET | /api/kpis/area/{area} | Obtiene KPIs por área |
-| GET | /api/kpis/estado/{estado} | Obtiene KPIs por estado |
-| POST | /api/kpis | Registra un KPI |
-| PUT | /api/kpis/{id} | Actualiza un KPI |
-| DELETE | /api/kpis/{id} | Elimina un KPI |
+| Método | Endpoint                              | Descripción                |
+| ------ | ------------------------------------- | -------------------------- |
+| GET    | /api/datos/ventas                     | Obtener todas las ventas   |
+| GET    | /api/datos/ventas/total               | Obtener total de ventas    |
+| GET    | /api/datos/ventas/sucursal/{sucursal} | Buscar ventas por sucursal |
+| GET    | /api/datos/ventas/origen/{origen}     | Buscar ventas por origen   |
+| GET    | /api/datos/ventas/estado/{estado}     | Buscar ventas por estado   |
+| POST   | /api/datos/ventas                     | Registrar venta            |
+| DELETE | /api/datos/ventas/{id}                | Eliminar venta             |
 
 ---
 
-## 📝 Ejemplo de Uso
+# 📝 Ejemplo de Registro de Venta
 
-### Crear KPI
+## Solicitud
 
 ```json
-POST /api/kpis
-
 {
-  "tipo": "VENTAS",
-  "valor": 150000.00,
-  "fecha": "2026-06-11",
-  "area": "VENTAS",
-  "estado": "VERDE"
+  "sucursal": "Santiago Centro",
+  "monto": 150000,
+  "cantidad": 3,
+  "origen": "POS"
 }
 ```
 
-### Respuesta
+## Respuesta
 
 ```json
 {
   "id": 1,
-  "tipo": "VENTAS",
-  "valor": 150000.00,
-  "fecha": "2026-06-11",
-  "area": "VENTAS",
-  "estado": "VERDE"
+  "sucursal": "Santiago Centro",
+  "monto": 150000,
+  "cantidad": 3,
+  "origen": "POS",
+  "fechaVenta": "2026-06-11T15:30:00",
+  "estado": "PROCESADO"
 }
 ```
 
 ---
 
-## 📋 Catálogo de Valores
+# 📌 Reglas de Negocio Implementadas
 
-### Tipos de KPI
+Durante el registro de ventas se aplican las siguientes validaciones:
 
-| Tipo | Descripción |
-|--------|--------|
-| VENTAS | Indicadores de ventas |
-| RENTABILIDAD | Indicadores financieros |
-| INVENTARIO | Control de inventario |
-| LOGISTICA | Indicadores logísticos |
+### Regla 1
 
-### Áreas de Negocio
+La sucursal es obligatoria.
 
-| Área |
-|--------|
-| VENTAS |
-| FINANZAS |
-| OPERACIONES |
+```text
+No puede ser nula ni vacía.
+```
 
-### Estados
+### Regla 2
 
-| Estado | Descripción |
-|--------|--------|
-| VERDE | Rendimiento óptimo |
-| AMARILLO | Requiere atención |
-| ROJO | Estado crítico |
+El monto debe ser mayor a cero.
+
+```text
+Monto > 0
+```
+
+### Regla 3
+
+La cantidad debe ser mayor a cero.
+
+```text
+Cantidad > 0
+```
+
+### Regla 4
+
+El origen de la venta es obligatorio.
+
+```text
+No puede ser nulo ni vacío.
+```
+
+### Regla 5
+
+La fecha de venta se genera automáticamente.
+
+```text
+LocalDateTime.now()
+```
+
+### Regla 6
+
+Toda venta registrada queda con estado:
+
+```text
+PROCESADO
+```
 
 ---
 
-## 📂 Estructura del Proyecto
+# 📂 Estructura del Proyecto
 
 ```text
-ms-kpi/
-├── src/
+ms-datos
 │
-├── main/
-│   ├── java/com/cordillera/mskpi/
-│   │
-│   ├── config/
-│   │   └── CorsConfig.java
-│   │
-│   ├── controller/
-│   │   └── KpiController.java
-│   │
-│   ├── dto/
-│   │   ├── KpiRequestDTO.java
-│   │   └── KpiResponseDTO.java
-│   │
-│   ├── exception/
-│   │   ├── GlobalExceptionHandler.java
-│   │   └── ResourceNotFoundException.java
-│   │
-│   ├── model/
-│   │   └── Kpi.java
-│   │
-│   ├── repository/
-│   │   └── KpiRepository.java
-│   │
-│   ├── service/
-│   │   └── KpiService.java
-│   │
-│   └── MsKpiApplication.java
+├── src
 │
-├── test/
-│   ├── java/com/cordillera/mskpi/
+├── main
+│   └── java/com/cordillera/msdatos
+│
+│       ├── config
+│       │   └── CorsConfig.java
+│       │
+│       ├── controller
+│       │   └── VentaController.java
+│       │
+│       ├── dto
+│       │   ├── VentaRequestDTO.java
+│       │   └── VentaResponseDTO.java
+│       │
+│       ├── exception
+│       │   ├── GlobalExceptionHandler.java
+│       │   └── ResourceNotFoundException.java
+│       │
+│       ├── model
+│       │   └── Venta.java
+│       │
+│       ├── repository
+│       │   └── VentaRepository.java
+│       │
+│       ├── service
+│       │   └── VentaService.java
+│       │
+│       └── MsDatosApplication.java
+│
+├── test
+│   ├── java/com/cordillera/msdatos
+│   │   ├── controller
+│   │   │   └── VentaControllerTest.java
+│   │   ├── exception
+│   │   │   └── GlobalExceptionHandlerTest.java
+│   │   ├── repository
+│   │   │   └── VentaRepositoryTest.java
+│   │   ├── service
+│   │   │   └── VentaServiceTest.java
+│   │   └── MsDatosApplicationTests.java
 │   │
-│   ├── controller/
-│   │   └── KpiControllerTest.java
-│   │
-│   ├── exception/
-│   │   └── GlobalExceptionHandlerTest.java
-│   │
-│   ├── repository/
-│   │   └── KpiRepositoryTest.java
-│   │
-│   ├── service/
-│   │   └── KpiServiceTest.java
-│   │
-│   └── resources/
+│   └── resources
 │       └── application-test.properties
 │
 ├── Dockerfile
 ├── docker-compose.yml
 ├── pom.xml
-├── mvnw
-├── mvnw.cmd
 └── README.md
 ```
 
 ---
 
-## 📌 Componentes Principales
-
-```text
-config/       → Configuración CORS
-controller/   → Endpoints REST
-dto/          → Objetos de transferencia
-exception/    → Manejo centralizado de errores
-model/        → Entidades JPA
-repository/   → Acceso a datos
-service/      → Lógica de negocio
-resources/    → Configuración de la aplicación
-```
-
----
-
-## 🏗️ Flujo de Arquitectura
+# 🏗️ Arquitectura
 
 ```text
 Cliente
-   ↓
-Controller
-   ↓
-Service
-   ↓
-Repository
-   ↓
+   │
+   ▼
+VentaController
+   │
+   ▼
+VentaService
+   │
+   ▼
+VentaRepository
+   │
+   ▼
 MySQL
 ```
 
 ---
 
-## 🧪 Pruebas Unitarias
+# 🧪 Pruebas Automatizadas
 
-El proyecto cuenta con pruebas para:
+El proyecto incorpora pruebas unitarias y de integración para garantizar la calidad del software.
 
-### Controller
-- KpiControllerTest
+## Controller
 
-### Service
-- KpiServiceTest
+* VentaControllerTest
 
-### Repository
-- KpiRepositoryTest
+Valida:
 
-### Exception Handling
-- GlobalExceptionHandlerTest
+* Endpoints REST
+* Códigos HTTP
+* Serialización JSON
+* Integración con Service
 
-### Configuración de Pruebas
-- application-test.properties
+## Service
 
-### Herramientas utilizadas
+* VentaServiceTest
 
-- JUnit 5
-- Mockito
-- MockMvc
-- Spring Test
-- JaCoCo
+Valida:
+
+* Registro de ventas
+* Eliminación de ventas
+* Cálculo de totales
+* Búsquedas por filtros
+* Reglas de negocio
+* Manejo de excepciones
+
+## Repository
+
+* VentaRepositoryTest
+
+Valida:
+
+* Persistencia de datos
+* Consultas JPA
+* Eliminación de registros
+* Búsquedas por sucursal
+* Búsquedas por origen
+* Búsquedas por estado
+
+## Exception Handling
+
+* GlobalExceptionHandlerTest
+
+Valida:
+
+* Error 400 Bad Request
+* Error 404 Not Found
+* Error 500 Internal Server Error
+* Validaciones de entrada
 
 ---
 
-## 📊 Cobertura de Código
+# 📊 Cobertura de Código
 
 Reporte generado con JaCoCo:
 
-| Paquete | Cobertura |
-|----------|----------|
-| Service | 100% |
-| Controller | 100% |
-| Repository | 100% |
-| Exception | 100% |
-| Config | 100% |
-| Application | 100% |
+| Componente  | Cobertura |
+| ----------- | --------- |
+| Service     | 100%      |
+| Controller  | 100%      |
+| Repository  | 100%      |
+| Exception   | 100%      |
+| Config      | 100%      |
+| Application | 100%      |
 
-### Resultado Global
+## Resultado Global
 
 ```text
 Instructions: 100%
@@ -302,22 +350,22 @@ Classes:      100%
 
 ---
 
-## 📡 Monitoreo
+# 📡 Monitoreo
 
-### Estado de Salud
+## Estado de Salud
 
 ```http
-GET http://localhost:8082/actuator/health
+GET /actuator/health
 ```
 
-### Información de la Aplicación
+## Información de la Aplicación
 
 ```http
-GET http://localhost:8082/actuator/info
+GET /actuator/info
 ```
 
 ---
 
-## 👥 Proyecto Académico
+# 👥 Proyecto Académico
 
-Desarrollado por el equipo **Grupo Cordillera** como parte de la implementación de una arquitectura basada en microservicios utilizando Spring Boot, Docker, MySQL, pruebas automatizadas y cobertura de código con JaCoCo.
+Desarrollado por el equipo Grupo Cordillera como parte de la implementación de una arquitectura basada en microservicios utilizando Spring Boot, Docker, MySQL, pruebas automatizadas y cobertura de código mediante JaCoCo.
