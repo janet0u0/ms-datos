@@ -243,4 +243,80 @@ class VentaServiceTest {
 
         verify(ventaRepository, never()).deleteById(any());
     }
+    // ── Reglas de negocio adicionales ─────────────────────────────
+
+@Test
+@DisplayName("Debe conservar todos los datos enviados al registrar")
+void registrarVenta_DebeConservarDatosIngresados() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Valparaiso");
+    dto.setMonto(35000.0);
+    dto.setCantidad(4);
+    dto.setOrigen("ECOMMERCE");
+
+    when(ventaRepository.save(any(Venta.class)))
+            .thenAnswer(i -> i.getArgument(0));
+
+    var result = ventaService.registrarVenta(dto);
+
+    assertEquals("Valparaiso", result.getSucursal());
+    assertEquals(35000.0, result.getMonto());
+    assertEquals(4, result.getCantidad());
+    assertEquals("ECOMMERCE", result.getOrigen());
+}
+
+@Test
+@DisplayName("Debe guardar una sola vez en el repositorio")
+void registrarVenta_DebeGuardarUnaSolaVez() {
+
+    VentaRequestDTO dto = new VentaRequestDTO();
+    dto.setSucursal("Santiago");
+    dto.setMonto(10000.0);
+    dto.setCantidad(2);
+    dto.setOrigen("POS");
+
+    when(ventaRepository.save(any(Venta.class)))
+            .thenAnswer(i -> i.getArgument(0));
+
+    ventaService.registrarVenta(dto);
+
+    verify(ventaRepository, times(1))
+            .save(any(Venta.class));
+}
+
+@Test
+@DisplayName("Debe verificar existencia antes de eliminar")
+void eliminarVenta_DebeVerificarExistenciaAntesDeEliminar() {
+
+    when(ventaRepository.existsById(1L))
+            .thenReturn(true);
+
+    doNothing().when(ventaRepository)
+            .deleteById(1L);
+
+    ventaService.eliminarVenta(1L);
+
+    verify(ventaRepository, times(1))
+            .existsById(1L);
+
+    verify(ventaRepository, times(1))
+            .deleteById(1L);
+}
+
+@Test
+@DisplayName("Debe retornar exactamente el total acumulado")
+void obtenerTotalVentas_DebeSumarCorrectamente() {
+
+    when(ventaRepository.findAll())
+            .thenReturn(List.of(
+                    Venta.builder().monto(10000.0).build(),
+                    Venta.builder().monto(20000.0).build(),
+                    Venta.builder().monto(30000.0).build()
+            ));
+
+    Double total = ventaService.obtenerTotalVentas();
+
+    assertEquals(60000.0, total);
+}
 }
