@@ -66,7 +66,6 @@ public class VentaService {
                 .toList();
     }
 
-    // ✅ CORREGIDO: usa @Builder en vez de setters
     public VentaResponseDTO registrarVenta(VentaRequestDTO dto) {
         log.info("Iniciando registro de venta para sucursal: {}", dto.getSucursal());
         Venta venta = Venta.builder()
@@ -88,7 +87,7 @@ public class VentaService {
                 .sum();
     }
 
-    // ✅ CORREGIDO: lanza ResourceNotFoundException en vez de solo loguear
+    
     public void eliminarVenta(Long id) {
         log.info("Intentando eliminar venta con ID: {}", id);
         if (!ventaRepository.existsById(id)) {
