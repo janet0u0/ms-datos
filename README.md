@@ -366,6 +366,6 @@ GET /actuator/info
 
 ---
 
-# 👥 Proyecto Académico
+# 👥 Proyecto
 
 Desarrollado por el equipo Grupo Cordillera como parte de la implementación de una arquitectura basada en microservicios utilizando Spring Boot, Docker, MySQL, pruebas automatizadas y cobertura de código mediante JaCoCo.
