@@ -1,38 +1,45 @@
-# 📊 MS-Datos - Grupo Cordillera
+# 📈 MS-KPI - Grupo Cordillera
 
-Microservicio encargado de centralizar, almacenar y consultar las ventas generadas por las distintas sucursales del Grupo Cordillera.
+Microservicio encargado de la gestión y monitoreo de los **Indicadores Clave de Desempeño (KPIs)** del Grupo Cordillera.
+
+Permite registrar, consultar, actualizar y eliminar KPIs asociados a distintas áreas de negocio, facilitando la toma de decisiones mediante indicadores de ventas, rentabilidad, logística e inventario.
 
 ---
 
 ## 🛠️ Tecnologías
 
-* Java 17
-* Spring Boot 3.3.5
-* Spring Data JPA
-* Spring Boot Actuator
-* MySQL 8.0
-* Docker
-* Lombok
-* Maven
-* JUnit 5
-* Mockito
-* JaCoCo
+- Java 17
+- Spring Boot 3.3.5
+- Spring Data JPA
+- Spring Boot Actuator
+- MySQL 8.0
+- Docker
+- Lombok
+- Maven
+- JUnit 5
+- Mockito
+- JaCoCo
 
 ---
 
 ## 🎯 Patrones Aplicados
 
-* **Repository Pattern**: abstrae el acceso a la base de datos.
-* **DTO Pattern**: separa el modelo interno de la API.
-* **Builder Pattern**: facilita la construcción de entidades mediante Lombok.
+### Repository Pattern
+Abstrae el acceso a la base de datos mediante Spring Data JPA.
+
+### DTO Pattern
+Separa el modelo interno de la API para mayor seguridad y desacoplamiento.
+
+### Builder Pattern
+Facilita la creación de objetos utilizando Lombok `@Builder`.
 
 ---
 
 ## ✅ Requisitos
 
-* Java 17
-* Maven
-* Docker Desktop
+- Java 17
+- Maven
+- Docker Desktop
 
 ---
 
@@ -49,17 +56,17 @@ docker compose up --build
 #### 1. Clonar repositorio
 
 ```bash
-git clone https://github.com/janet0u0/ms-datos
-cd ms-datos
+git clone https://github.com/janet0u0/ms-kpi
+cd ms-kpi
 ```
 
-#### 2. Levantar MySQL
+#### 2. Levantar Base de Datos
 
 ```bash
 docker compose up -d
 ```
 
-#### 3. Ejecutar aplicación
+#### 3. Ejecutar Aplicación
 
 ```bash
 .\mvnw spring-boot:run
@@ -68,34 +75,39 @@ docker compose up -d
 Disponible en:
 
 ```text
-http://localhost:8083
+http://localhost:8082
 ```
 
 ---
 
 ## 🔗 Endpoints
 
-| Método | Endpoint                              | Descripción                    |
-| ------ | ------------------------------------- | ------------------------------ |
-| GET    | /api/datos/ventas                     | Obtiene todas las ventas       |
-| GET    | /api/datos/ventas/sucursal/{sucursal} | Obtiene ventas por sucursal    |
-| GET    | /api/datos/ventas/total               | Obtiene el monto total vendido |
-| POST   | /api/datos/ventas                     | Registra una nueva venta       |
+| Método | Endpoint | Descripción |
+|----------|----------|----------|
+| GET | /api/kpis | Obtiene todos los KPIs |
+| GET | /api/kpis/{id} | Obtiene un KPI por ID |
+| GET | /api/kpis/tipo/{tipo} | Obtiene KPIs por tipo |
+| GET | /api/kpis/area/{area} | Obtiene KPIs por área |
+| GET | /api/kpis/estado/{estado} | Obtiene KPIs por estado |
+| POST | /api/kpis | Registra un KPI |
+| PUT | /api/kpis/{id} | Actualiza un KPI |
+| DELETE | /api/kpis/{id} | Elimina un KPI |
 
 ---
 
 ## 📝 Ejemplo de Uso
 
-### Registrar Venta
+### Crear KPI
 
 ```json
-POST /api/datos/ventas
+POST /api/kpis
 
 {
-  "sucursal": "Santiago Centro",
-  "monto": 150000,
-  "cantidad": 3,
-  "origen": "POS"
+  "tipo": "VENTAS",
+  "valor": 150000.00,
+  "fecha": "2026-06-11",
+  "area": "VENTAS",
+  "estado": "VERDE"
 }
 ```
 
@@ -104,12 +116,11 @@ POST /api/datos/ventas
 ```json
 {
   "id": 1,
-  "sucursal": "Santiago Centro",
-  "monto": 150000,
-  "cantidad": 3,
-  "origen": "POS",
-  "fechaVenta": "2026-05-07T00:00:00",
-  "estado": "PROCESADO"
+  "tipo": "VENTAS",
+  "valor": 150000.00,
+  "fecha": "2026-06-11",
+  "area": "VENTAS",
+  "estado": "VERDE"
 }
 ```
 
@@ -117,62 +128,84 @@ POST /api/datos/ventas
 
 ## 📋 Catálogo de Valores
 
-### Origen de Venta
+### Tipos de KPI
 
-| Código    | Descripción                       |
-| --------- | --------------------------------- |
-| POS       | Venta en tienda física            |
-| ECOMMERCE | Venta realizada por canal digital |
+| Tipo | Descripción |
+|--------|--------|
+| VENTAS | Indicadores de ventas |
+| RENTABILIDAD | Indicadores financieros |
+| INVENTARIO | Control de inventario |
+| LOGISTICA | Indicadores logísticos |
 
-### Estado de Venta
+### Áreas de Negocio
 
-| Estado    | Descripción                      |
-| --------- | -------------------------------- |
-| PROCESADO | Venta registrada correctamente   |
-| PENDIENTE | Venta pendiente de procesamiento |
+| Área |
+|--------|
+| VENTAS |
+| FINANZAS |
+| OPERACIONES |
+
+### Estados
+
+| Estado | Descripción |
+|--------|--------|
+| VERDE | Rendimiento óptimo |
+| AMARILLO | Requiere atención |
+| ROJO | Estado crítico |
 
 ---
 
 ## 📂 Estructura del Proyecto
 
 ```text
-ms-datos/
+ms-kpi/
 ├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/cordillera/msdatos/
-│   │   │       ├── controller/
-│   │   │       │   └── VentaController.java
-│   │   │       ├── dto/
-│   │   │       │   ├── VentaRequestDTO.java
-│   │   │       │   └── VentaResponseDTO.java
-│   │   │       ├── model/
-│   │   │       │   └── Venta.java
-│   │   │       ├── repository/
-│   │   │       │   └── VentaRepository.java
-│   │   │       ├── service/
-│   │   │       │   └── VentaService.java
-│   │   │       └── MsDatosApplication.java
+│
+├── main/
+│   ├── java/com/cordillera/mskpi/
 │   │
-│   │   └── resources/
-│   │       └── application.properties
+│   ├── config/
+│   │   └── CorsConfig.java
 │   │
-│   └── test/
-│       ├── java/
-│       │   └── com/cordillera/msdatos/
-│       │       ├── controller/
-│       │       │   └── VentaControllerTest.java
-│       │       ├── dto/
-│       │       │   ├── VentaRequestDTOTest.java
-│       │       │   └── VentaResponseDTOTest.java
-│       │       ├── repository/
-│       │       │   └── VentaRepositoryTest.java
-│       │       ├── service/
-│       │       │   └── VentaServiceTest.java
-│       │       └── MsDatosApplicationTests.java
-│       │
-│       └── resources/
-│           └── application-test.properties
+│   ├── controller/
+│   │   └── KpiController.java
+│   │
+│   ├── dto/
+│   │   ├── KpiRequestDTO.java
+│   │   └── KpiResponseDTO.java
+│   │
+│   ├── exception/
+│   │   ├── GlobalExceptionHandler.java
+│   │   └── ResourceNotFoundException.java
+│   │
+│   ├── model/
+│   │   └── Kpi.java
+│   │
+│   ├── repository/
+│   │   └── KpiRepository.java
+│   │
+│   ├── service/
+│   │   └── KpiService.java
+│   │
+│   └── MsKpiApplication.java
+│
+├── test/
+│   ├── java/com/cordillera/mskpi/
+│   │
+│   ├── controller/
+│   │   └── KpiControllerTest.java
+│   │
+│   ├── exception/
+│   │   └── GlobalExceptionHandlerTest.java
+│   │
+│   ├── repository/
+│   │   └── KpiRepositoryTest.java
+│   │
+│   ├── service/
+│   │   └── KpiServiceTest.java
+│   │
+│   └── resources/
+│       └── application-test.properties
 │
 ├── Dockerfile
 ├── docker-compose.yml
@@ -187,8 +220,10 @@ ms-datos/
 ## 📌 Componentes Principales
 
 ```text
-controller/   → Exposición de endpoints REST
-dto/          → Objetos de transferencia de datos
+config/       → Configuración CORS
+controller/   → Endpoints REST
+dto/          → Objetos de transferencia
+exception/    → Manejo centralizado de errores
 model/        → Entidades JPA
 repository/   → Acceso a datos
 service/      → Lógica de negocio
@@ -215,18 +250,55 @@ MySQL
 
 ## 🧪 Pruebas Unitarias
 
-El proyecto incorpora pruebas unitarias para:
+El proyecto cuenta con pruebas para:
 
-* Controller
-* Service
-* Repository
-* DTO
+### Controller
+- KpiControllerTest
 
-Herramientas utilizadas:
+### Service
+- KpiServiceTest
 
-* JUnit 5
-* Mockito
-* JaCoCo
+### Repository
+- KpiRepositoryTest
+
+### Exception Handling
+- GlobalExceptionHandlerTest
+
+### Configuración de Pruebas
+- application-test.properties
+
+### Herramientas utilizadas
+
+- JUnit 5
+- Mockito
+- MockMvc
+- Spring Test
+- JaCoCo
+
+---
+
+## 📊 Cobertura de Código
+
+Reporte generado con JaCoCo:
+
+| Paquete | Cobertura |
+|----------|----------|
+| Service | 100% |
+| Controller | 100% |
+| Repository | 100% |
+| Exception | 100% |
+| Config | 100% |
+| Application | 100% |
+
+### Resultado Global
+
+```text
+Instructions: 100%
+Branches:     100%
+Lines:        100%
+Methods:      100%
+Classes:      100%
+```
 
 ---
 
@@ -235,11 +307,17 @@ Herramientas utilizadas:
 ### Estado de Salud
 
 ```http
-GET http://localhost:8083/actuator/health
+GET http://localhost:8082/actuator/health
 ```
 
 ### Información de la Aplicación
 
 ```http
-GET http://localhost:8083/actuator/info
+GET http://localhost:8082/actuator/info
 ```
+
+---
+
+## 👥 Proyecto Académico
+
+Desarrollado por el equipo **Grupo Cordillera** como parte de la implementación de una arquitectura basada en microservicios utilizando Spring Boot, Docker, MySQL, pruebas automatizadas y cobertura de código con JaCoCo.
